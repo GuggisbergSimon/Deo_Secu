@@ -8,7 +8,7 @@ public class SimpleController : NetworkBehaviour
 {
     [SerializeField] private float speed = 10.0f;
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (isLocalPlayer && (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0))
         {
