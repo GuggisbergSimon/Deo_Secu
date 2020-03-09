@@ -26,12 +26,12 @@ public class SimpleController : NetworkBehaviour
                     _tmpMessage += input;
                 }
 
-                if (input.Equals("\b") && _tmpMessage.Length > 0)
+                if (input.Equals("\b"))
                 {
-                    _tmpMessage = _tmpMessage.Substring(0, _tmpMessage.Length - 1);
+                    RemoveLastChar();
                 }
 
-                _text.text = _tmpMessage;
+                _text.text = _tmpMessage + "_";
             }
             else if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
             {
@@ -42,6 +42,7 @@ public class SimpleController : NetworkBehaviour
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
+                RemoveLastChar();
                 CmdPrintText(_tmpMessage);
                 _tmpMessage = "";
                 _inputMode = !_inputMode;
@@ -52,6 +53,14 @@ public class SimpleController : NetworkBehaviour
     private void FixedUpdate()
     {
         _text.text = _message;
+    }
+
+    private void RemoveLastChar()
+    {
+        if (_tmpMessage.Length > 0)
+        {
+            _tmpMessage = _tmpMessage.Substring(0, _tmpMessage.Length - 1);
+        }
     }
 
     [Command]
