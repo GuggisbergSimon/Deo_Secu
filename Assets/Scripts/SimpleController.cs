@@ -12,7 +12,7 @@ public class SimpleController : NetworkBehaviour
     [SyncVar] private string _message;
     private bool _inputMode = false;
     private string _tmpMessage = "";
-
+    private const int CESAR = 3;
 
     private void Update()
     {
@@ -61,6 +61,37 @@ public class SimpleController : NetworkBehaviour
         {
             _tmpMessage = _tmpMessage.Substring(0, _tmpMessage.Length - 1);
         }
+    }
+
+    private string Encrypt(string message)
+    {
+        return Cesar(message, CESAR);
+    }
+
+    private string Cesar(string message, int shift)
+    {
+        string newMessage = "";
+        foreach (var c in message)
+        {
+            int variant = 0;
+            if (c > 'z' && c < 'A' || c > 'Z')
+            {
+                variant = -26;
+            }
+            else if( c < 'a' || (c < 'A' && c > 'z'))
+            {
+                variant = 26;
+            }
+
+            newMessage += c + shift + variant;
+        }
+
+        return newMessage;
+    }
+    
+    private string Decrypt(string message)
+    {
+        return Cesar(message, -CESAR);
     }
 
     [Command]
