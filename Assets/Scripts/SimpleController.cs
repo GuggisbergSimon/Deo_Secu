@@ -208,31 +208,65 @@ public class SimpleController : NetworkBehaviour
     {
         return Cesar(message, CESAR);
     }
-
-    private string Cesar(string message, int shift)
-    {
-        string newMessage = "";
-        foreach (var c in message)
-        {
-            int variant = 0;
-            if (c > 'z' && c < 'A' || c > 'Z')
-            {
-                variant = -26;
-            }
-            else if( c < 'a' || (c < 'A' && c > 'z'))
-            {
-                variant = 26;
-            }
-
-            newMessage += Convert.ToChar(c + shift + variant);
-        }
-
-        return newMessage;
-    }
     
     private string Decrypt(string message)
     {
         return Cesar(message, -CESAR);
+    }
+
+    private string Cesar(string message, int shift)
+    {
+        if (message == null)
+        {
+            return "";
+        }
+        
+        string newMessage = "";
+        foreach (var c in message)
+        {
+            newMessage += Convert.ToChar(c + shift);
+        }
+
+        return newMessage;
+    }
+
+    private string Compress(string message)
+    {
+        if (message == null)
+        {
+            return "";
+        }
+
+        string newMsg = "";
+        int nbrChar = 1;
+        char previousChar = message[0];
+        for (int i = 1; i < message.Length; i++)
+        {
+            if (message[i] == previousChar)
+            {
+                nbrChar++;
+            }
+            else
+            {
+                newMsg += (nbrChar > 0 ? "" : nbrChar.ToString()) + previousChar;
+                nbrChar = 0;
+            }
+        }
+        newMsg += (nbrChar > 0 ? "" : nbrChar.ToString()) + previousChar;
+
+        return newMsg;
+    }
+
+    private string Decompress(string message)
+    {
+        if (message == null)
+        {
+            return "";
+        }
+
+        string newMsg = "";
+        
+        return newMsg;
     }
 
     [Command]
