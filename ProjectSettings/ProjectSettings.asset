@@ -42,8 +42,8 @@ PlayerSettings:
   m_SplashScreenLogos: []
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
-  defaultScreenWidth: 260
-  defaultScreenHeight: 260
+  defaultScreenWidth: 720
+  defaultScreenHeight: 600
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_StereoRenderingPath: 0
@@ -636,10 +636,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 605d8ab2-41c2-4278-89f2-d0c9f480366f
+  cloudProjectId: 8977c9dc-0bd2-4c09-8b36-57e6c1efcc59
   framebufferDepthMemorylessMode: 0
-  projectName: Deo_Secu (3)
-  organizationId: marita32
+  projectName: Deo_Secu (1)
+  organizationId: ataor
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

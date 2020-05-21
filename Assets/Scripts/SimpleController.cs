@@ -110,9 +110,8 @@ public class SimpleController : NetworkBehaviour
                 {
                     RemoveLastChar();
                 }
-
-                    _text.text = _tmpMessage + "_";
-
+                
+                _text.text = _tmpMessage + "_";
             }
             else if(_inputNameMode)
             {
@@ -156,7 +155,7 @@ public class SimpleController : NetworkBehaviour
                 {
                     _inputMode = !_inputMode;
                     RemoveLastChar();
-                    CmdPrintText(Encrypt(_tmpMessage));
+                    CmdPrintText(Compress(Encrypt(_tmpMessage)));
                     _tmpMessage = "";
                 }
                 else if (_inputNameMode)
@@ -185,9 +184,10 @@ public class SimpleController : NetworkBehaviour
         {
             g.GetComponent<SimpleController>()._localPlayer = _localPlayer;
         }
-        if (_autorizedNameList.Contains(_localPlayer.GetComponent<SimpleController>()._name)||isLocalPlayer)
+        if (_autorizedNameList.Contains(_localPlayer.GetComponent<SimpleController>()._name) || isLocalPlayer)
         {
-            _text.text = Decrypt(_message);
+            //Debug.Log(_message + ":" + Decompress(_message) + ":" + Decrypt(Decompress(_message)));
+            _text.text = Decrypt(Decompress(_message));
         }
         else
         {
@@ -208,31 +208,83 @@ public class SimpleController : NetworkBehaviour
     {
         return Cesar(message, CESAR);
     }
-
-    private string Cesar(string message, int shift)
-    {
-        string newMessage = "";
-        foreach (var c in message)
-        {
-            int variant = 0;
-            if (c > 'z' && c < 'A' || c > 'Z')
-            {
-                variant = -26;
-            }
-            else if( c < 'a' || (c < 'A' && c > 'z'))
-            {
-                variant = 26;
-            }
-
-            newMessage += Convert.ToChar(c + shift + variant);
-        }
-
-        return newMessage;
-    }
     
     private string Decrypt(string message)
     {
         return Cesar(message, -CESAR);
+    }
+
+    private string Cesar(string message, int shift)
+    {
+        if (message == null)
+        {
+            return "";
+        }
+        
+        string newMessage = "";
+        foreach (var c in message)
+        {
+            newMessage += Convert.ToChar(c + shift);
+        }
+
+        return newMessage;
+    }
+
+    private string Compress(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return "";
+        }
+
+        string newMsg = "";
+        int nbrChar = 1;
+        char previousChar = message[0];
+        for (int i = 1; i < message.Length; i++)
+        {
+            if (message[i] == previousChar)
+            {
+                nbrChar++;
+            }
+            else
+            {
+                newMsg += (nbrChar <= 1 && !Char.IsNumber(previousChar) ? "" : nbrChar.ToString()) + previousChar;
+                nbrChar = 1;
+                previousChar = message[i];
+            }
+        }
+        newMsg += (nbrChar <= 1 && !Char.IsNumber(previousChar) ? "" : nbrChar.ToString()) + previousChar;
+
+        return newMsg;
+    }
+
+    private string Decompress(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return "";
+        }
+
+        string newMsg = "";
+        bool isReadingChar = false;
+        int nbrChar = 1;
+        for (int i = 0; i < message.Length; i++)
+        {
+            //handles first number of duo
+            if (nbrChar <= 1 && Char.IsNumber(message[i]) && !isReadingChar)
+            {
+                nbrChar = message[i] - '0';
+                isReadingChar = true;
+            }
+            else
+            {
+                newMsg += new string(message[i], nbrChar);
+                nbrChar = 1;
+                isReadingChar = false;
+            }
+        }
+        
+        return newMsg;
     }
 
     [Command]
