@@ -19,7 +19,7 @@ public class SimpleController : NetworkBehaviour
     [SyncVar] private string _name = "New Player";
 
 
-    private SyncListString _autorizedNameList;
+    private SyncListString _autorizedNameList = null;
 
     //private bool _nameChosen = false;
     List<GameObject> _list = new List<GameObject>();
@@ -60,9 +60,9 @@ public class SimpleController : NetworkBehaviour
         Destroy(_listName);
     }
 
-    private void WritePlayerName(GameObject g)
+    private void WritePlayerName(string gName)
     {
-        if (_autorizedNameList.Contains(g.GetComponent<SimpleController>()._name))
+        if (_autorizedNameList.Contains(gName))
         {
             _listName.text += "O-";
         }
@@ -70,7 +70,7 @@ public class SimpleController : NetworkBehaviour
         {
             _listName.text += "X-";
         }
-        _listName.text += g.GetComponent<SimpleController>()._name + "\n";
+        _listName.text += gName + "\n";
     }
 
     private void SelectPlayer()
@@ -83,12 +83,13 @@ public class SimpleController : NetworkBehaviour
         _listName.text = "";
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
         {
-            if (g.GetComponent<SimpleController>()._name == _list[_playerIndex].GetComponent<SimpleController>()._name)
+            string cName = g.GetComponent<SimpleController>().name;
+            if (cName == _list[_playerIndex].GetComponent<SimpleController>()._name)
             {
                 _listName.text += "->";
             }
 
-            WritePlayerName(g);
+            WritePlayerName(cName);
         }
     }
 
@@ -110,7 +111,7 @@ public class SimpleController : NetworkBehaviour
 
                 _list.Add(g);
                 _listName.color = Color.red;
-                WritePlayerName(g);
+                WritePlayerName(g.GetComponent<SimpleController>().name);
                 
             }
         }
@@ -172,22 +173,24 @@ public class SimpleController : NetworkBehaviour
                 {
                     if (_list[_playerIndex] != null)
                     {
-                        if (!_autorizedNameList.Contains(_list[_playerIndex].GetComponent<SimpleController>()._name))
+                        string playerName = _list[_playerIndex].GetComponent<SimpleController>()._name;
+                        if (!_autorizedNameList.Contains(playerName))
                         {
-                            CmdAddAuthorizationList(_list[_playerIndex].GetComponent<SimpleController>()._name);
+                            CmdAddAuthorizationList(playerName);
                         }
                         else
                         {
-                            CmdRemoveAutorizationList(_list[_playerIndex].GetComponent<SimpleController>()._name);
+                            CmdRemoveAutorizationList(playerName);
                         }
                         _listName.text = "";
                         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
                         {
-                            if (g.GetComponent<SimpleController>()._name == _list[_playerIndex].GetComponent<SimpleController>()._name)
+                            string cName = g.GetComponent<SimpleController>().name;
+                            if (cName == playerName)
                             {
                                 _listName.text += "->";
                             }
-                            WritePlayerName(g);
+                            WritePlayerName(cName);
                         }
                     }
                     else
@@ -353,7 +356,6 @@ public class SimpleController : NetworkBehaviour
     [Command]
     private void CmdAddAuthorizationList(string l)
     {
-
         _autorizedNameList.Add(l);
     }
 
