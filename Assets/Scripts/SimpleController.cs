@@ -73,14 +73,26 @@ public class SimpleController : NetworkBehaviour
         _listName.text += g.GetComponent<SimpleController>()._name + "\n";
     }
 
-    private void SelectPlayer()
+    private void SelectPlayer(bool upArrow)
     {
-
-        _playerIndex++;
-        _playerIndex = _playerIndex % _list.Count;
+        if (upArrow)
+        {
+            _playerIndex++;
+        }
+        else
+        {
+            _playerIndex--;
+        }
+        _playerIndex = (_playerIndex+_list.Count) % _list.Count;
         
 
+
+        RefreshList();
         _listName.text = "";
+        if (_list[_playerIndex]==null)
+        {
+            _playerIndex = 0;
+        }
         foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
         {
             if (g.GetComponent<SimpleController>()._name == _list[_playerIndex].GetComponent<SimpleController>()._name)
@@ -92,6 +104,23 @@ public class SimpleController : NetworkBehaviour
         }
     }
 
+    private void RefreshList()
+    {
+        _list.Clear();
+        _listName.text = "";
+        _listName.transform.SetParent(canvas.transform);
+        _listName.rectTransform.localPosition = new Vector3();
+        _listName.rectTransform.localScale = Vector3.one;
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+        {
+
+            _list.Add(g);
+            _listName.color = Color.red;
+            WritePlayerName(g);
+
+        }
+    }
+
     private void OpenClosePlayerList()
     {
         if (_choosePlayerMode)
@@ -100,19 +129,7 @@ public class SimpleController : NetworkBehaviour
         }
         else
         {
-            _list.Clear();
-            _listName.text = "";
-            _listName.transform.SetParent(canvas.transform);
-            _listName.rectTransform.localPosition = new Vector3();
-            _listName.rectTransform.localScale = Vector3.one;
-            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
-            {
-
-                _list.Add(g);
-                _listName.color = Color.red;
-                WritePlayerName(g);
-                
-            }
+            RefreshList();
         }
         _choosePlayerMode = !_choosePlayerMode;
     }
@@ -125,7 +142,10 @@ public class SimpleController : NetworkBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
-                    SelectPlayer();
+                    SelectPlayer(true);
+                } else if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    SelectPlayer(false);
                 }
             }
             else if (_inputMode)
@@ -242,7 +262,10 @@ public class SimpleController : NetworkBehaviour
         }
         else
         {
-            _text.text = _message;
+            //if (_message.Trim() != "")
+           // {
+                _text.text = _message;
+            //}
         }
         _playerName.text = _name;
     }
